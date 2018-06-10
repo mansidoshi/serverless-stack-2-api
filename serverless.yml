@@ -111,8 +111,16 @@ functions:
           method: delete
           cors: true
           authorizer: aws_iam
-  # Create our resources with separate CloudFormation templates
-  resources:
+  billing:
+    handler: billing.main
+    events:
+      - http:
+          path: billing
+          method: post
+          cors: true
+          authorizer: aws_iam
+# Create our resources with separate CloudFormation templates
+resources:
     # DynamoDB
     - ${file(resources/dynamodb-table.yml)}
     # S3
@@ -120,11 +128,3 @@ functions:
     # Cognito
     - ${file(resources/cognito-user-pool.yml)}
     - ${file(resources/cognito-identity-pool.yml)}
-  billing:
-    handler: billing.main
-    events:
-        - http:
-            path: billing
-            method: post
-            cors: true
-            authorizer: aws_iam
